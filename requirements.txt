@@ -5,4 +5,5 @@ openpyxl
 python-dotenv
 openai
 matplotlib
+gunicorn
 scikit-learn
