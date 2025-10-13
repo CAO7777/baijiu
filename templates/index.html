@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>匠心酿造 · 数字人画像与白酒产品模拟分析</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" class="hidden">
+    <defs>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F4E6C4"/><stop offset="50%" stop-color="#E3C37B"/><stop offset="100%" stop-color="#C9A24E"/></linearGradient>
+      <symbol id="i-bottle" viewBox="0 0 24 24"><path d="M10 2h4v3l1 2v4h-6V7l1-2V2zM8 11h8l2 4v6a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-6l2-4zM9 15l-1.2 3h8.4L15 15H9z" fill="currentColor"/></symbol>
+      <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 4h16v3a5 5 0 0 1-5 5H9A5 5 0 0 1 4 7V4zm4 10h8l-1 5H9l-1-5z" fill="currentColor"/></symbol>
+      <symbol id="i-wheat" viewBox="0 0 24 24"><path d="M12 2l2 2-2 2-2-2 2-2zm-2 6l2 2-2 2-2-2 2-2zm6 0l2 2-2 2-2-2 2-2zM8 14l2 2-2 2-2-2 2-2zm8 0l2 2-2 2-2-2 2-2zM11 12h2v10h-2z" fill="currentColor"/></symbol>
+      <symbol id="i-price" viewBox="0 0 24 24"><path d="M12 2l8 8-8 12L4 10l8-8zm1 5h-2v2H9v2h2v2h2v-2h2V9h-2V7z" fill="currentColor"/></symbol>
+      <symbol id="i-location" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/></symbol>
+      <symbol id="i-quill" viewBox="0 0 24 24"><path d="M20 2L8 14l-2 6 6-2L22 4l-2-2zM4 20h6v2H4z" fill="currentColor"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v10l4-4 1 1-6 6-6-6 1-1 4 4V3h2zm-9 15h18v2H3z" fill="currentColor"/></symbol>
+      
+      <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </symbol>
+
+    </defs>
+  </svg>
+
+  <div class="texture"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="monogram">酿</div>
+        <div class="brand-text"><span>匠心酿造</span><em>Persona & Product Insight</em></div>
+      </div>
+      <nav class="steps" aria-label="步骤导航">
+        <button class="step-pill active" data-step="1"><svg class="icon"><use href="#i-quill"/></svg>创建画像</button>
+        <button class="step-pill" data-step="2"><svg class="icon"><use href="#i-bottle"/></svg>产品信息</button>
+        <button class="step-pill" data-step="3"><svg class="icon"><use href="#i-users"/></svg>独立报告</button>
+        <button class="step-pill" data-step="4"><svg class="icon"><use href="#i-cup"/></svg>整体分析</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="panel step" id="step-1" aria-labelledby="title-step1">
+        <header class="panel-head">
+          <h1 id="title-step1" class="display with-icon"><svg class="icon xl"><use href="#i-quill"/></svg>创建数字人画像</h1>
+          <p class="lead">添加一个或多个画像，用以驱动后续的产品洞察分析。</p>
+        </header>
+        <form id="persona-form" onsubmit="return false;">
+            <div class="grid-2">
+            <div class="group">
+                <h2 class="h2 with-icon"><svg class="icon"><use href="#i-location"/></svg>基本信息</h2>
+                <div class="form-grid">
+                <label class="field">
+                    <span>性别</span>
+                    <select id="gender">
+                      <option value="男">男</option>
+                      <option value="女">女</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>年龄</span>
+                    <input id="age" type="number" value="30" min="1" max="120" placeholder="例如：30" />
+                </label>
+                <label class="field">
+                    <span>所在城市</span>
+                    <input id="city" type="text" placeholder="例如：成都市" />
+                </label>
+                <label class="field">
+                    <span>职业</span>
+                    <input id="profession" type="text" placeholder="例如：软件工程师" />
+                </label>
+                </div>
+            </div>
+            <div class="group">
+                <h2 class="h2 with-icon"><svg class="icon"><use href="#i-wheat"/></svg>MBTI 偏好</h2>
+                <p class="hint">从四组维度中选择更贴近画像的选项（自动组合为四字母）。</p>
+                <div class="pref-grid">
+                <fieldset class="fieldset">
+                    <legend>能量来源</legend>
+                    <label><input type="radio" name="energy" value="I" checked> I 内向（独处恢复）</label>
+                    <label><input type="radio" name="energy" value="E"> E 外向（社交充能）</label>
+                </fieldset>
+                <fieldset class="fieldset">
+                    <legend>信息获取</legend>
+                    <label><input type="radio" name="info" value="S" checked> S 实感（关注现实）</label>
+                    <label><input type="radio" name="info" value="N"> N 直觉（洞察趋势）</label>
+                </fieldset>
+                <fieldset class="fieldset">
+                    <legend>决策方式</legend>
+                    <label><input type="radio" name="decision" value="T" checked> T 思考（理性判断）</label>
+                    <label><input type="radio" name="decision" value="F"> F 情感（价值导向）</label>
+                </fieldset>
+                <fieldset class="fieldset">
+                    <legend>生活态度</legend>
+                    <label><input type="radio" name="life" value="J" checked> J 判断（规划有序）</label>
+                    <label><input type="radio" name="life" value="P"> P 知觉（灵活开放）</label>
+                </fieldset>
+                </div>
+            </div>
+            </div>
+            <div class="group">
+            <h2 class="h2 with-icon"><svg class="icon"><use href="#i-price"/></svg>生活与消费偏好（可选）</h2>
+            <div class="form-grid">
+                <label class="field">
+                    <span>受教育程度</span>
+                    <select id="edu">
+                        <option value="">不指定</option><option>高中及以下</option><option>大专</option><option>本科</option><option>硕士</option><option>博士</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>年收入区间</span>
+                    <select id="income">
+                        <option value="">不指定</option><option>10万以下</option><option>10-20万</option><option>20-50万</option><option>50万以上</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>期望价格</span>
+                    <select id="price">
+                        <option value="">不指定</option><option>100元以下</option><option>100-299元</option><option>300-999元</option><option>1000元以上</option>
+                    </select>
+                </label>
+            </div>
+            </div>
+            <div class="group">
+            <h2 class="h2 with-icon"><svg class="icon"><use href="#i-cup"/></svg>白酒偏好（可选）</h2>
+            <div class="form-grid">
+                <label class="field">
+                    <span>饮酒频次</span>
+                    <select id="drinkFreq">
+                        <option value="">不指定</option><option>从不</option><option>每月1-2次</option><option>每周</option><option>几乎每天</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>饮酒年限</span>
+                    <input id="drinkYears" type="number" placeholder="例如：5" min="0" />
+                </label>
+                <label class="field">
+                    <span>偏好香型</span>
+                    <select id="flavor">
+                        <option value="">不指定</option><option>酱香型</option><option>浓香型</option><option>清香型</option><option>其他</option>
+                    </select>
+                </label>
+            </div>
+            </div>
+        </form>
+        <div class="actions">
+          <button id="addPersona" class="btn outline">添加新画像</button>
+          <button class="btn primary next" data-next="2"><svg class="icon"><use href="#i-bottle"/></svg>下一步：填写产品信息</button>
+        </div>
+        <div id="personaTags" class="tags"></div>
+      </section>
+
+      <section class="panel step hidden" id="step-2" aria-labelledby="title-step2">
+        <header class="panel-head">
+          <h1 id="title-step2" class="display with-icon"><svg class="icon xl"><use href="#i-bottle"/></svg>添加产品信息</h1>
+          <p class="lead">上传产品描述与图片，生成专属洞察。</p>
+        </header>
+        <div class="grid-aside">
+          <div>
+            <label class="field block">
+              <span>产品描述</span>
+              <textarea id="productDesc" rows="8" placeholder="例如：这是一款来自贵州茅台镇的53度酱香型白酒，采用传统坤沙工艺酿造，口感醇厚，回味悠长。"></textarea>
+            </label>
+          </div>
+          <div>
+            <label class="field block">
+              <span>产品图片</span>
+              <input id="productImg" type="file" accept="image/*" class="file-input" />
+              <label for="productImg" class="btn outline">选择文件</label>
+              <div id="productPreview" class="preview tip">建议上传横向高清图，展示瓶身与包装细节。</div>
+            </label>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn outline prev" data-prev="1">返回上一步</button>
+          <button class="btn primary" id="genReport"><svg class="icon"><use href="#i-cup"/></svg>生成分析报告</button>
+        </div>
+      </section>
+
+      <section class="panel step hidden" id="step-3" aria-labelledby="title-step3">
+        <header class="panel-head">
+          <h1 id="title-step3" class="display with-icon"><svg class="icon xl"><use href="#i-cup"/></svg>模拟分析报告</h1>
+          <p class="lead">基于画像与产品信息的综合洞察，辅助市场判断与定价策略。</p>
+        </header>
+        <article class="paper">
+          <h3 class="section with-icon"><svg class="icon"><use href="#i-users"/></svg>各画像独立报告</h3>
+          <div id="individual-reports-container">
+            <div class="placeholder-content"><div class="spinner"></div><p>正在逐一生成独立分析报告...</p></div>
+          </div>
+        </article>
+        <div id="next-to-summary-container" class="actions" style="display: none;">
+            <button class="btn primary next" data-next="4">查看整体市场分析 <span class="arrow">→</span></button>
+        </div>
+      </section>
+
+      <section class="panel step hidden" id="step-4" aria-labelledby="title-step4">
+        <header class="panel-head">
+            <h1 id="title-step4" class="display with-icon"><svg class="icon xl"><use href="#i-cup"/></svg>模拟分析报告</h1>
+            <p class="lead">基于画像与产品信息的综合洞察，辅助市场判断与定价策略。</p>
+        </header>
+        <div class="stack-row">
+          <div class="stack-col">
+            <article class="paper">
+              <h3 class="section with-icon"><svg class="icon"><use href="#i-wheat"/></svg>整体市场分析</h3>
+              <div id="summary-report-container" class="prose">
+                <div class="placeholder-content"><div class="spinner"></div><p>正在汇总总体报告...</p></div>
+              </div>
+            </article>
+          </div>
+          <aside class="stack-col right">
+            <div class="insight">
+              <h3 class="section with-icon"><svg class="icon"><use href="#i-cup"/></svg>数据洞察可视化</h3>
+              <div id="charts-container">
+                </div>
+              <div class="cta">
+                <button class="btn ghost prev" data-prev="3">返回独立报告</button>
+                <button class="btn primary" id="exportBtn"><svg class="icon"><use href="#i-download"/></svg>导出为 HTML</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>© 2025 匠心酿造 · 品牌洞察系统</span>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
