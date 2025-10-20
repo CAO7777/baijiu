@@ -7,4 +7,5 @@ openai
 matplotlib
 scikit-learn
 gunicorn
+waitress
 numpy
