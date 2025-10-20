@@ -1,0 +1,10 @@
+Flask
+Flask-Cors
+pandas
+openpyxl
+python-dotenv
+openai
+matplotlib
+scikit-learn
+gunicorn
+numpy
