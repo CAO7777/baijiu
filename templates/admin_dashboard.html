@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台报告归档</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #FAF8F5; color: #2A1B1B; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: #fff; border: 1px solid #E9E3DA; border-radius: 16px; padding: 24px; box-shadow: 0 8px 25px rgba(110,15,26,.08); }
+        h1 { font-family: "Noto Serif SC", serif; color: #6E0F1A; margin-top: 0; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E9E3DA; padding-bottom: 10px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #E9E3DA; padding: 10px 12px; text-align: left; font-size: 14px; }
+        th { background-color: #fcfaf8; }
+        tr:nth-child(even) { background-color: #fdfdfc; }
+        a { color: #6E0F1A; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+        .logout { color: #7B6363; font-size: 14px; }
+        .status-missing { color: #999; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>后台报告归档</h1>
+            <a href="{{ url_for('admin_logout') }}" class="logout">退出登录</a>
+        </header>
+        
+        <p>此处按时间倒序显示所有在服务器上生成的报告归档。</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>报告ID (时间戳)</th>
+                    <th>数字人 (JSON)</th>
+                    <th>综合报告 (HTML)</th>
+                    <th>独立报告 (HTML)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if archives %}
+                    {% for archive in archives %}
+                    <tr>
+                        <td><strong>{{ archive.id }}</strong></td>
+                        <td>
+                            {% if archive.has_personas %}
+                                <a href="{{ url_for('download_archive', report_id=archive.id, filename='personas.json') }}" download>personas.json</a>
+                            {% else %}
+                                <span class="status-missing">未找到</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if archive.summary_file %}
+                                <a href="{{ url_for('download_archive', report_id=archive.id, filename=archive.summary_file) }}" download>{{ archive.summary_file }}</a>
+                            {% else %}
+                                <span class="status-missing">未找到</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if archive.has_individual %}
+                                <a href="{{ url_for('download_archive', report_id=archive.id, filename='individual_reports.html') }}" download>individual_reports.html</a>
+                            {% else %}
+                                <span class="status-missing">未找到</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 20px;">
+                            暂无归档报告。请先在主页生成一份报告。
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
